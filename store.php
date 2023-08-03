@@ -2,7 +2,7 @@
 // store.php
 
 // Include the inventory.php file to access its functions
-require_once "inventory.php";
+require_once "get_inventory.php";
 
 // Check if the customer is logged in
 if (!isset($_SESSION['username'])) {

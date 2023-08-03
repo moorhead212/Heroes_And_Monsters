@@ -1,18 +1,21 @@
 <?php
-// get_inventory.php
 
-// Include the database connection file
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once "db_connection.php";
 
-// Function to get the store inventory for a specific store
+// Function to get the store inventory for the logged-in employee
 function getStoreInventory($store_id)
 {
     global $conn;
 
-    $stmt = $conn->prepare("SELECT i.sku, i.item_type, i.item_name, inv.quantity 
+    // Adjusted SQL query to retrieve store inventory data with item_price and warehouse_id
+    $stmt = $conn->prepare("SELECT i.sku, i.item_type, i.item_name, i.item_price, inv.quantity, s.stocks_from
                            FROM inventory AS inv
                            JOIN item AS i ON inv.sku = i.sku
-                           WHERE inv.stored_at_id = ? AND inv.stored_at_type = 'store'");
+                           JOIN store AS s ON inv.stored_at_id = s.store_id AND inv.stored_at_type = 'store'
+                           WHERE inv.stored_at_id = ?");
 
     $stmt->bind_param("i", $store_id);
     $stmt->execute();
@@ -21,6 +24,10 @@ function getStoreInventory($store_id)
     $store_inventory = array();
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
+            // Fetch the warehouse_id for each item from the stocks_from field
+            $warehouse_id = $row['stocks_from'];
+            $row['warehouse_id'] = $warehouse_id;
+
             $store_inventory[] = $row;
         }
     }
@@ -28,19 +35,20 @@ function getStoreInventory($store_id)
     return $store_inventory;
 }
 
-// Function to get the warehouse inventory for a specific store
-function getWarehouseInventory($store_id)
+
+
+// Function to get the warehouse inventory for the logged-in employee's store
+function getWarehouseInventory($warehouse_id)
 {
     global $conn;
 
-    $stmt = $conn->prepare("SELECT i.sku, i.item_type, i.item_name, inv.quantity, w.warehouse_name, w.address
+    // Adjusted SQL query to retrieve warehouse inventory data with item_price from the item table
+    $stmt = $conn->prepare("SELECT i.sku, i.item_type, i.item_name, i.item_price, inv.quantity
                            FROM inventory AS inv
                            JOIN item AS i ON inv.sku = i.sku
-                           JOIN warehouse AS w ON inv.stored_at_id = w.warehouse_id
-                           WHERE inv.stored_at_type = 'warehouse'
-                           AND inv.stored_at_id IN (SELECT warehouse_id FROM warehouse_store_relation WHERE store_id = ?)");
+                           WHERE inv.stored_at_id = ? AND inv.stored_at_type = 'warehouse'");
 
-    $stmt->bind_param("i", $store_id);
+    $stmt->bind_param("i", $warehouse_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -54,19 +62,20 @@ function getWarehouseInventory($store_id)
     return $warehouse_inventory;
 }
 
-// Check if the request method is GET and the store_id parameter is set
-if ($_SERVER["REQUEST_METHOD"] === "GET" && isset($_GET["store_id"])) {
-    $store_id = $_GET["store_id"];
-
-    // Get the store inventory and warehouse inventory for the selected store
-    $store_inventory = getStoreInventory($store_id);
-    $warehouse_inventory = getWarehouseInventory($store_id);
-
-    // Combine the store and warehouse inventories into a single response array
-    $response = array("store_inventory" => $store_inventory, "warehouse_inventory" => $warehouse_inventory);
-
-    // Send the response back to the client as JSON
-    header("Content-Type: application/json");
-    echo json_encode($response);
+// Check if the employee is logged in
+session_start();
+if (!isset($_SESSION["username"])) {
+    header("Location: login.php");
+    exit();
 }
+
+// Get the stored_at_id for the logged-in employee
+$stored_at_id = $_SESSION["store_id"];
+
+// Get the store inventory for the logged-in employee
+$store_inventory = getStoreInventory($stored_at_id);
+
+// Get the warehouse inventory for the logged-in employee's store
+$warehouse_inventory = getWarehouseInventory($stored_at_id);
+
 ?>

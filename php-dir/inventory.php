@@ -1,6 +1,4 @@
 <?php
-// inventory.php file
-
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -67,7 +65,7 @@ function getWarehouseInventory($warehouse_id)
 // Check if the employee is logged in
 session_start();
 if (!isset($_SESSION["username"])) {
-    header("Location: login.php");
+    header("Location: ./login.php");
     exit();
 }
 
@@ -115,8 +113,6 @@ $store_inventory_html = getStoreInventoryHtml($store_inventory);
 $warehouse_inventory_html = getWarehouseInventoryHtml($warehouse_inventory);
 
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
     <?php
@@ -129,8 +125,8 @@ $warehouse_inventory_html = getWarehouseInventoryHtml($warehouse_inventory);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Store# <?= $store_id ?> Inventory</title>
-    <link rel="stylesheet" href="./inventory-style.css">
-    <script src="inventory-script.js"></script>
+    <link rel="stylesheet" href="../styles/inventory-style.css">
+    <script src="../scripts/inventory-script.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 </head>
@@ -203,24 +199,28 @@ $warehouse_inventory_html = getWarehouseInventoryHtml($warehouse_inventory);
 
 <!-- Restock Order Table -->
 <!-- Restock Order Table -->
+<table class="inventory-table" id="restock-order">
+    <caption>Restock Order</caption>
+    <thead>
+        <tr>
+            <th>Item ID</th>
+            <th>Qty</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><input type="text" name="restock_item_id[]" class="restock-item-id"></td>
+            <td><input type="number" name="restock_qty[]" class="restock-qty"></td>
+        </tr>
+    </tbody>
+</table>
+
+</div>
+
 <div id="order-button">
-    <form id="order-form" action="./process_order.php" method="POST">
-        <table class="inventory-table" id="restock-order">
-            <caption>Restock Order</caption>
-            <thead>
-                <tr>
-                    <th>Item ID</th>
-                    <th>Qty</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><input type="text" name="restock_item_id[]" class="restock-item-id"></td>
-                    <td><input type="number" name="restock_qty[]" class="restock-qty"></td>
-                </tr>
-            </tbody>
-        </table>
-        <button type="button" id="add-restock-row">Add Row</button>
+    <button id="add-restock-row">Add Row</button>
+    <!-- Add an ID to the form element for easy access -->
+    <form id="order-form" action="../php-dir/process_order.php" method="POST">
         <button type="submit" id="order">Order</button>
     </form>
 </div>

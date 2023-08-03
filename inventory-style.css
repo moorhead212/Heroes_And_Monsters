@@ -13,12 +13,21 @@ body {
 #inventory-container {
     display: flex;
     align-items: flex-start;
-    justify-content: space-between;
+    justify-content: space-around;
     margin-top: 20px;
 }
 
-.inventory-table {
-    width: 30%;
+#inv-div {
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+}
+
+#inventory-column {
+    width:30%;
+}
+
+inventory-table {
     border-collapse: collapse;
     border: 1px solid #ccc; /* Add borders to the table */
     margin-right: 10px; /* Spacing between the tables */

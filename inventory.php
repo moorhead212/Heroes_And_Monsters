@@ -1,4 +1,6 @@
 <?php
+// inventory.php file
+
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -113,3 +115,119 @@ $store_inventory_html = getStoreInventoryHtml($store_inventory);
 $warehouse_inventory_html = getWarehouseInventoryHtml($warehouse_inventory);
 
 ?>
+
+
+<!DOCTYPE html>
+<html lang="en">
+    <?php
+    // Fetch store_id from the PHP session and assign it to a variable
+    $store_id = $_SESSION["store_id"];
+    ?>
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store# <?= $store_id ?> Inventory</title>
+    <link rel="stylesheet" href="./inventory-style.css">
+    <script src="inventory-script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</head>
+
+<body>
+    <div id="titlebox">Store # <?= $store_id ?> Inventory</div>
+
+
+    <div id="inventory-container">
+        <table class="inventory-table" id="store-inventory">
+            <caption>Store# <?= $store_id ?> Current Stock</caption>
+            <thead>
+                <tr>
+                    <th>Item ID</th>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Qty</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($store_inventory as $item): ?>
+                <tr>
+                    <td>
+                        <?= $item['sku'] ?>
+                    </td>
+                    <td>
+                        <?= $item['item_type'] ?>
+                    </td>
+                    <td>
+                        <?= $item['item_name'] ?>
+                    </td>
+                    <td>
+                        <?= $item['quantity'] ?>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <table class="inventory-table" id="warehouse-inventory">
+            <caption>Warehouse Current Stock</caption>
+            <thead>
+                <tr>
+                    <th>Item ID</th>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Qty</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($warehouse_inventory as $item): ?>
+                <tr>
+                    <td>
+                        <?= $item['sku'] ?>
+                    </td>
+                    <td>
+                        <?= $item['item_type'] ?>
+                    </td>
+                    <td>
+                        <?= $item['item_name'] ?>
+                    </td>
+                    <td>
+                        <?= $item['quantity'] ?>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+
+        </table>
+
+<!-- Restock Order Table -->
+<!-- Restock Order Table -->
+<div id="order-button">
+    <form id="order-form" action="./process_order.php" method="POST">
+        <table class="inventory-table" id="restock-order">
+            <caption>Restock Order</caption>
+            <thead>
+                <tr>
+                    <th>Item ID</th>
+                    <th>Qty</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="text" name="restock_item_id[]" class="restock-item-id"></td>
+                    <td><input type="number" name="restock_qty[]" class="restock-qty"></td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="button" id="add-restock-row">Add Row</button>
+        <button type="submit" id="order">Order</button>
+    </form>
+</div>
+
+    
+
+
+</body>
+
+</html>

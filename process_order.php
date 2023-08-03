@@ -1,29 +1,29 @@
 <?php
+require_once "db_connection.php";
 
 session_start();
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-echo "Process Order Script is Executed";
-exit();
-
-
-
-// process_order.php
-
-// Include the database connection file
-require_once "db_connection.php";
-
 // Check if the request method is POST
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Get the order data from the request body
-    $orderData = json_decode(file_get_contents("php://input"), true);
+    // Get the restock item IDs and quantities from the form data
+    $itemIds = $_POST['restock_item_id'];
+    $quantities = $_POST['restock_qty'];
 
     // Validate and process the order data
-    if (is_array($orderData) && !empty($orderData)) {
-        $response = processOrder($orderData);
+    if (is_array($itemIds) && is_array($quantities) && !empty($itemIds) && !empty($quantities)) {
+        $orderData = [];
+        foreach ($itemIds as $index => $itemId) {
+            $quantity = (int) $quantities[$index];
+            if ($itemId !== "" && $quantity > 0) {
+                $orderData[] = ['sku' => $itemId, 'quantity' => $quantity];
+            }
+        }
+
+        if (!empty($orderData)) {
+            $response = processOrder($orderData);
+        } else {
+            $response = array("success" => false, "message" => "Invalid order data.");
+        }
     } else {
         $response = array("success" => false, "message" => "Invalid order data.");
     }
@@ -53,8 +53,10 @@ function processOrder($orderData)
             $stmt->bind_param("si", $sku, $_SESSION["store_id"]);
             $stmt->execute();
             $stmt->bind_result($warehouseQuantity);
+            $stmt->fetch();
+            $stmt->close(); // Close the prepared statement to avoid the "Commands out of sync" error
 
-            if ($stmt->fetch()) {
+            if ($warehouseQuantity !== null) {
                 // If the warehouse has enough quantity, update the inventory for both warehouse and store
                 if ($warehouseQuantity >= $quantity) {
                     // Update warehouse inventory
@@ -62,6 +64,7 @@ function processOrder($orderData)
                     $stmt = $conn->prepare($query);
                     $stmt->bind_param("isi", $quantity, $sku, $_SESSION["store_id"]);
                     $stmt->execute();
+                    $stmt->close(); // Close the prepared statement
 
                     // Check if the item already exists in the store inventory
                     $query = "SELECT quantity FROM inventory WHERE sku = ? AND stored_at_id = ? AND stored_at_type = 'store'";
@@ -69,23 +72,24 @@ function processOrder($orderData)
                     $stmt->bind_param("si", $sku, $_SESSION["store_id"]);
                     $stmt->execute();
                     $stmt->bind_result($storeQuantity);
+                    $stmt->fetch();
+                    $stmt->close(); // Close the prepared statement
 
-                    if ($stmt->fetch()) {
+                    if ($storeQuantity !== null) {
                         // If the item exists in the store inventory, update the quantity
                         $query = "UPDATE inventory SET quantity = quantity + ? WHERE sku = ? AND stored_at_id = ? AND stored_at_type = 'store'";
                         $stmt = $conn->prepare($query);
                         $stmt->bind_param("isi", $quantity, $sku, $_SESSION["store_id"]);
                         $stmt->execute();
+                        $stmt->close(); // Close the prepared statement
                     } else {
                         // If the item does not exist in the store inventory, insert a new record
                         $query = "INSERT INTO inventory (sku, quantity, stored_at_id, stored_at_type) VALUES (?, ?, ?, 'store')";
                         $stmt = $conn->prepare($query);
                         $stmt->bind_param("sii", $sku, $quantity, $_SESSION["store_id"]);
                         $stmt->execute();
+                        $stmt->close(); // Close the prepared statement
                     }
-
-                    // Commit the transaction
-                    mysqli_commit($conn);
 
                     // Set success response
                     $response["success"] = true;
@@ -107,6 +111,10 @@ function processOrder($orderData)
                 return $response;
             }
         }
+
+        // Commit the transaction after processing all order items
+        mysqli_commit($conn);
+
     } catch (Exception $e) {
         // If any exception occurs, rollback the transaction
         mysqli_rollback($conn);

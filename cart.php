@@ -219,10 +219,6 @@ $username = $_SESSION["username"];
 $cart_items = getCartItems($username);
 ?>
 
-// Get the cart items for the logged-in customer
-$username = $_SESSION["username"];
-$cart_items = getCartItems($username);
-?>
 
 <!DOCTYPE html>
 <html lang="en">

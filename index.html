@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heroes & Monsters</title>
+    <link rel="stylesheet" href="./hamsplashstyle.css">
+</head>
+
+<body>
+    <div id="titlebox">Welcome to Heroes & Monsters Magical Emporium</div>
+    <div id="innerdiv">
+        <form style="margin-left:auto; margin-right:auto; width:50%" action="login.php" method="post">
+            <div id="loginboxes">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username">
+            </div>
+            <div id="loginboxes">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password">
+            </div>
+            <div id="loginboxes">
+                <label for="employee">Login as Employee</label>
+                <input type="checkbox" id="employee" name="employee">
+            </div>
+            <div id="loginboxes">
+                <input id="inputbutton" type="submit" value="Login">
+            </div>
+        
+            <div style="margin-top:20%; margin-bottom:10px" id="loginboxes"> 
+                New here?
+                <input style="margin-bottom:10px; margin-top:10px" type="button" value="Registration" onclick="window.location.href='./customer_create.html'">
+
+                <input style="margin-bottom:10px;" type="button" value="Employee Registration" onclick="window.location.href='./employee_create.html'">
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

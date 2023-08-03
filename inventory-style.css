@@ -1,0 +1,55 @@
+body {
+    margin: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#titlebox {
+    font-size: 2em;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    text-align: center;
+    margin-top: 20px;
+}
+
+#inventory-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.inventory-table {
+    width: 30%;
+    border-collapse: collapse;
+    border: 1px solid #ccc; /* Add borders to the table */
+    margin-right: 10px; /* Spacing between the tables */
+}
+
+.inventory-table caption {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.inventory-table th,
+.inventory-table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+}
+
+/* Updated style for the Restock Order form */
+.inventory-table td input,
+.inventory-table td span {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px;
+}
+
+#order-button {
+    text-align: right;
+    margin-top: 20px;
+    margin-right:1%;
+}
+
+/* Updated style for the Order button alignment */
+#order-button button {
+    padding: 5px 20px;
+}

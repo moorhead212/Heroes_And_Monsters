@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Employee</title>
+    <link rel="stylesheet" href="./hamstyle.css">
+</head>
+
+<body>
+    <div id="titlebox">Create Employee</div>
+    <div id="innerdiv">
+        <form action="register_employee.php" method="post">
+            <div class="form-container">
+                <div class="form-column">
+                    <label for="first_name">First Name</label>
+                    <input type="text" id="fname" name="fname" required>
+
+                    <label for="last_name">Last Name</label>
+                    <input type="text" id="lname" name="lname" required>
+
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+
+                    <label for="date_of_birth">Date of Birth</label>
+                    <input type="date" id="bdate" name="bdate" required>
+
+                    <label for="phone_number">Phone Number</label>
+                    <input type="tel" id="phone_num" name="phone_num" required>
+                </div>
+                <div class="form-column">
+                    <label for="employee_id">Employee ID#</label>
+                    <input type="text" id="employee_id" name="employee_id" required>
+
+                    <label for="works_at">Store #</label>
+                    <input type="text" id="works_at" name="works_at" required>
+
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+
+                    <label for="confirm_password">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                </div>
+            </div>
+            <div class="form-buttons">
+                <input type="submit" value="Submit">
+                <input type="button" value="Cancel" onclick="window.location.href='index.html'">
+            </div>
+        </form>
+    </div>
+</body>
+
+</

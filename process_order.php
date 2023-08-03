@@ -94,6 +94,7 @@ function processOrder($orderData)
                     // Set success response
                     $response["success"] = true;
                     $response["message"] = "Order processed successfully.";
+                    header("Location: inventory.php");
                 } else {
                     // If the warehouse does not have enough quantity, rollback the transaction
                     mysqli_rollback($conn);
